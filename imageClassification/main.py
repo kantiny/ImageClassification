@@ -6,19 +6,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 train_dir = os.path.join('C:/Users/Аня/Desktop/Тестовое задание/ImageClassification/data/', 'IDRND_FASDB_train')
-test_dir = os.path.join('C:/Users/Аня/Desktop/Тестовое задание/ImageClassification/data/', 'IDRND_FASDB_train')
+test_dir = os.path.join('C:/Users/Аня/Desktop/Тестовое задание/ImageClassification/data/', 'test')
+
 
 train_real_dir = os.path.join(train_dir, 'real')  # директория с картинками оригинала для обучения
-train_real_dir = os.path.join(train_dir, 'spoof')  # директория с картинками копий для обучения
+train_spoof_dir = os.path.join(train_dir, 'spoof')  # директория с картинками копий для обучения
 
 test_real_dir = os.path.join(train_dir, 'real')  # директория с картинками оригинала для тестирования
 test_spoof_dir = os.path.join(train_dir, 'spoof')  # директория с картинками копий для тестирования
 
-total_train = len(os.listdir(train_real_dir)) + len(os.listdir(train_real_dir))
+total_train = len(os.listdir(train_real_dir)) + len(os.listdir(train_spoof_dir))
 total_val = len(os.listdir(test_real_dir)) + len(os.listdir(test_spoof_dir))
 
 batch_size = 128
-epochs = 15
+epochs = 1
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
 
@@ -73,6 +74,19 @@ val_loss = history.history['val_loss']
 
 epochs_range = range(epochs)
 
+plt.figure(figsize=(8, 8))
+plt.subplot(1, 2, 1)
+plt.plot(epochs_range, acc, label='Training Accuracy')
+plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+plt.legend(loc='lower right')
+plt.title('Training and Validation Accuracy')
+
+plt.subplot(1, 2, 2)
+plt.plot(epochs_range, loss, label='Training Loss')
+plt.plot(epochs_range, val_loss, label='Validation Loss')
+plt.legend(loc='upper right')
+plt.title('Training and Validation Loss')
+plt.show()
 '''
 
 validation_image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255) # Генератор для проверочных данных
