@@ -5,7 +5,8 @@ from matplotlib import image
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import skimage
+import io
+
 
 batch_size = 128
 epochs = 15
@@ -84,29 +85,12 @@ def train_predict():
 # train_predict()
 
 model.load_weights('my_model_weights.h5')
-
-'''
-train_image_generator = tf.keras.preprocessing.image.ImageDataGenerator(
-    rescale=1. / 255)  # Генератор для тренировочных данных
-
-test_image_generator = tf.keras.preprocessing.image.ImageDataGenerator(
-    rescale=1. / 255)  # Генератор для тестовых данных
-
-train_data_gen = train_image_generator.flow_from_directory(batch_size=batch_size,
-                                                            directory=train_dir,
-                                                            shuffle=True,
-                                                            target_size=(IMG_HEIGHT, IMG_WIDTH),
-                                                            class_mode='binary')
-test_data_gen = test_image_generator.flow_from_directory(batch_size=batch_size,
-                                                         directory=test_dir,
-                                                         shuffle=False,
-                                                         target_size=(IMG_HEIGHT, IMG_WIDTH),
-                                                         class_mode=None)
-
-for pic in test_data_gen:
-    predictions = model.predict(pic)
-    print(predictions)
-'''
-images = skimage.io.ImageCollection(test_dir)
-for ime in images:
-    model.predict(ime.shape())
+with open("datatest_result.txt", mode='w') as f:
+    for image in os.listdir(test_dir):
+        if image[len(image)-4:len(image)] == ".png":
+            im = tf.keras.preprocessing.image.load_img(os.path.join(test_dir, image), target_size=(IMG_HEIGHT, IMG_WIDTH))
+            im = tf.keras.preprocessing.image.img_to_array(im)
+            im = np.expand_dims(im, axis=0)
+            im /= 255
+            print(image + "," + str(1 - model.predict(im)[0, 0]))
+            f.write(image + "," + str(1 - model.predict(im)[0, 0]) + "\n")
